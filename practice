@@ -1,0 +1,624 @@
+# 1.1
+
+import sys
+import math
+import random
+
+print(f"Версия Python: {sys.version.split()[0]}")
+print(f"Интерпретатор: {sys.executable}")
+print(f"Количество путей поиска: {len(sys.path)}")
+
+for path in sys.path[:4]:
+    print(f"    {path}")
+
+print(f"math.pi = {math.pi}")
+
+random.seed(42)
+
+print(f"random.random() = {random.random()}")
+print(f"Всего загружено модулей: {len(sys.modules)}")
+print(f"Первые 5 имён: {sorted(sys.modules)[:5]}")
+
+public_math = sorted(
+    name for name in dir(math)
+    if not name.startswith("_")
+)
+
+print(f"Публичных имён в math: {len(public_math)}")
+print(f"Первые 8: {public_math[:8]}")
+print(f"Мой __name__ = {__name__}")
+
+
+# 1.2
+
+import math
+
+PI = math.pi
+VERSION = "1.0.0"
+_secret = "private"
+
+
+def circle_area(r):
+    return PI * r ** 2
+
+
+def circle_len(r):
+    return 2 * PI * r
+
+
+def _helper():
+    return PI / 2
+
+
+def sphere_volume(r):
+    """Возвращает объём шара радиуса r."""
+    return 4 * PI * r ** 3 / 3
+
+
+if __name__ == "__main__":
+    print(f"[{VERSION}] Самопроверка mymodule:")
+    print(f"S(r=2) = {circle_area(2)}")
+    print(f"L(r=2) = {circle_len(2)}")
+
+
+import mymodule
+from mymodule import circle_area
+from mymodule import circle_len as perimeter
+import mymodule as mm
+
+print(f"1) mymodule.circle_area(5) = {mymodule.circle_area(5)}")
+print(f"2) circle_area(5)          = {circle_area(5)}")
+print(f"3) perimeter(5)            = {perimeter(5)}")
+print(f"4) mm.PI                   = {mm.PI}")
+print(
+    f"dir(mymodule) -> "
+    f"{[n for n in dir(mymodule) if not n.startswith('__')]}"
+)
+print(f"mymodule.__name__ = {mymodule.__name__}")
+print(f"mymodule.__file__ = {mymodule.__file__}")
+print(f"mm._helper() = {mm._helper()}")
+print(f"mymodule is mm = {mymodule is mm}")
+
+
+# 1.3
+
+import math
+
+
+def circle_area(r):
+    return math.pi * r ** 2
+
+
+def triangle_area(a, h):
+    return a * h / 2
+
+
+def sphere_volume(r):
+    return 4 * math.pi * r ** 3 / 3
+
+
+def cube_volume(a):
+    return a ** 3
+
+
+def hemisphere_area(r):
+    return 2 * circle_area(r)
+
+
+__version__ = "0.2.0"
+
+__all__ = [
+    "circle_area",
+    "triangle_area",
+    "sphere_volume",
+    "cube_volume",
+]
+
+print(f"geometry.__version__ = {__version__}")
+print(f"geometry.circle_area(3) = {circle_area(3):.4f}")
+print(f"triangle_area(6, 4) = {triangle_area(6, 4):.1f}")
+print(f"sphere_volume(3) = {sphere_volume(3):.4f}")
+print(f"hemisphere_area(3) = {hemisphere_area(3):.3f}")
+print(f"cube_volume(3) = {cube_volume(3):.1f}")
+print(f"geometry.__all__ = {__all__}")
+
+
+# 2.1
+
+import random
+from collections import Counter
+
+random.seed(42)
+
+print(f"random()           : {random.random():.6f}")
+print(f"uniform(1, 10)     : {random.uniform(1, 10):.3f}")
+print(f"randint(1, 6)      : {random.randint(1, 6)}")
+print(f"randrange(0,100,5) : {random.randrange(0, 100, 5)}")
+
+print("\nБросок двух кубиков:")
+
+for i in range(1, 6):
+    a = random.randint(1, 6)
+    b = random.randint(1, 6)
+    print(f"Бросок {i}: {a} + {b} = {a + b}")
+
+counts = Counter(
+    random.randint(1, 6)
+    for _ in range(10_000)
+)
+
+print("\nСтатистика 10000 бросков:")
+
+for face in range(1, 7):
+    percent = counts[face] / 100
+    bars = "#" * (counts[face] // 50)
+
+    print(
+        f"{face}: {counts[face]:4d} "
+        f"({percent:5.2f}%) {bars}"
+    )
+
+print("\nТеоретическая частота каждой грани: 16.67%")
+
+
+# 2.2
+
+import random
+import math
+
+random.seed(42)
+
+suits = "♠♥♦♣"
+ranks = "6789TJQKA"
+
+deck = [
+    f"{rank}{suit}"
+    for suit in suits
+    for rank in ranks
+]
+
+print(f"Всего карт в колоде: {len(deck)}")
+print(f"Рука игрока: {random.sample(deck, 5)}")
+print(f"Карта дня: {random.choice(deck)}")
+
+loot = [
+    "обычная",
+    "редкая",
+    "легендарная",
+]
+
+print(
+    "Лут:",
+    random.choices(
+        loot,
+        weights=[70, 25, 5],
+        k=5
+    )
+)
+
+shuffled = deck.copy()
+random.shuffle(shuffled)
+
+print(f"После shuffle: {shuffled[:6]}")
+
+cards = random.sample(deck, 15)
+
+players = [
+    cards[i:i + 5]
+    for i in range(0, 15, 5)
+]
+
+for name, hand in zip(
+    ("Алиса", "Борис", "Вера"),
+    players
+):
+    print(f"{name}: {hand}")
+
+lottery = sorted(
+    random.sample(range(1, 46), 6)
+)
+
+probability = 1 / math.comb(45, 6)
+
+print(f"Лотерея 6 из 45: {lottery}")
+print(
+    f"Вероятность угадать всё: "
+    f"{probability:.12e}"
+)
+
+
+# 3.1
+
+import math
+
+print("Константы:")
+
+for name in (
+    "pi",
+    "e",
+    "tau",
+    "inf",
+    "nan",
+):
+    print(
+        f"math.{name} = "
+        f"{getattr(math, name)}"
+    )
+
+print("\nОкругления:")
+
+x = 7.6
+
+print(f"x = {x}")
+print(f"floor(x) = {math.floor(x)}")
+print(f"ceil(x) = {math.ceil(x)}")
+print(f"trunc(x) = {math.trunc(x)}")
+print(f"round(x) = {round(x)}")
+print(f"round(2.5) = {round(2.5)}")
+print(f"round(3.5) = {round(3.5)}")
+
+print("\nСтепени и логарифмы:")
+
+print(f"sqrt(144) = {math.sqrt(144)}")
+print(f"pow(2, 10) = {math.pow(2, 10)}")
+print(f"2 ** 10 = {2 ** 10}")
+print(f"exp(1) = {math.exp(1)}")
+print(f"log(e) = {math.log(math.e)}")
+print(f"log(1024, 2) = {math.log(1024, 2)}")
+print(f"log10(1000) = {math.log10(1000)}")
+print(f"log2(1024) = {math.log2(1024)}")
+
+print("\nДругие функции:")
+
+print(f"factorial(10) = {math.factorial(10)}")
+print(f"gcd(48, 180) = {math.gcd(48, 180)}")
+print(f"lcm(4, 6) = {math.lcm(4, 6)}")
+print(f"comb(10, 3) = {math.comb(10, 3)}")
+print(f"perm(10, 3) = {math.perm(10, 3)}")
+print(f"prod([1,2,3,4]) = {math.prod([1, 2, 3, 4])}")
+print(f"isqrt(50) = {math.isqrt(50)}")
+
+print("\nПроверка точности:")
+
+a = 0.1 + 0.2
+b = 0.3
+
+print(f"0.1 + 0.2 == 0.3 -> {a == b}")
+print(
+    f"math.isclose(0.1 + 0.2, 0.3) -> "
+    f"{math.isclose(a, b)}"
+)
+
+values = [0.1] * 10
+
+print(f"math.fsum([0.1]*10) = {math.fsum(values)}")
+print(f"sum([0.1]*10) = {sum(values)}")
+
+
+# 4.1
+
+import sys
+import subprocess
+
+print(sys.version)
+print(sys.executable)
+
+subprocess.run(
+    [sys.executable, "-m", "pip", "-V"],
+    check=False
+)
+
+subprocess.run(
+    [sys.executable, "-m", "pip", "list"],
+    check=False
+)
+
+
+# 4.2
+
+requirements = """six==1.17.0
+packaging>=23.0,<25
+"""
+
+with open(
+    "requirements.txt",
+    "w",
+    encoding="utf-8"
+) as file:
+    file.write(requirements)
+
+print(requirements)
+
+
+# 4.3
+
+import os
+
+print("Текущая директория:")
+print(os.getcwd())
+
+print("\nФайлы:")
+for item in os.listdir("."):
+    print(item)
+
+print("\nПеременные окружения:")
+print("PATH =", os.environ.get("PATH"))
+print("HOME =", os.environ.get("HOME"))
+
+print("\nPYTHONPATH =", os.environ.get("PYTHONPATH"))
+
+
+# 5.1
+
+import sys
+import site
+
+print("Python:", sys.version)
+print("Исполняемый файл:", sys.executable)
+print("Платформа:", sys.platform)
+print("Префикс:", sys.prefix)
+print("Базовый префикс:", sys.base_prefix)
+
+print(
+    "В виртуальном окружении:",
+    sys.prefix != sys.base_prefix
+)
+
+print("site-packages:")
+
+for path in site.getsitepackages():
+    print(path)
+
+print("\nПуть поиска модулей:")
+
+for path in sys.path:
+    print(path)
+
+
+# 5.2
+
+import sys
+
+print("Аргументы командной строки:")
+
+for i, argument in enumerate(sys.argv):
+    print(f"{i}: {argument}")
+
+print("\nКоличество аргументов:")
+print(len(sys.argv) - 1)
+
+
+# 6.1
+
+import random
+
+numbers = [
+    random.randint(1, 100)
+    for _ in range(10)
+]
+
+print("Список:", numbers)
+print("Минимум:", min(numbers))
+print("Максимум:", max(numbers))
+print("Сумма:", sum(numbers))
+print("Среднее:", sum(numbers) / len(numbers))
+
+print(
+    "Чётные:",
+    [x for x in numbers if x % 2 == 0]
+)
+
+
+# 7.1
+
+import datetime
+
+now = datetime.datetime.now()
+
+print("Дата и время:", now)
+print("Дата:", now.date())
+print("Время:", now.time())
+print("Год:", now.year)
+print("Месяц:", now.month)
+print("День:", now.day)
+
+future = now + datetime.timedelta(days=7)
+
+print("Через 7 дней:", future)
+
+
+# 8.1
+
+import math
+import random
+import sched
+import time
+
+
+G0 = 9.80665
+
+
+def delta_v(m0, m1, isp=300):
+    if isp <= 0:
+        raise ValueError("Удельный импульс должен быть положительным")
+
+    if m0 < m1 or m1 <= 0:
+        raise ValueError("m0 должно быть больше или равно m1")
+
+    return isp * G0 * math.log(m0 / m1)
+
+
+def flight_time(distance_km, accel):
+    if distance_km <= 0 or accel <= 0:
+        raise ValueError(
+            "Расстояние и ускорение должны быть положительными"
+        )
+
+    distance_m = distance_km * 1000
+
+    return (
+        2 * math.sqrt(
+            (distance_m / 2) / accel
+        ) / 3600
+    )
+
+
+def fuel_needed(m_dry, target_dv, isp=300):
+    if m_dry <= 0:
+        raise ValueError(
+            "Сухая масса должна быть положительной"
+        )
+
+    if target_dv < 0:
+        raise ValueError(
+            "Требуемая delta-v не может быть отрицательной"
+        )
+
+    return m_dry * (
+        math.exp(
+            target_dv / (isp * G0)
+        ) - 1
+    )
+
+
+EVENTS = [
+    (
+        "Микрометеорит пробил обшивку",
+        -15,
+        0.4,
+    ),
+    (
+        "Солнечная вспышка: радиация",
+        -10,
+        0.2,
+    ),
+    (
+        "Удачная коррекция курса",
+        5,
+        0.2,
+    ),
+    (
+        "Найдены запасы предыдущей миссии",
+        20,
+        0.1,
+    ),
+    (
+        "Отказ системы охлаждения",
+        -25,
+        0.1,
+    ),
+]
+
+
+def random_event(seed=None):
+    rnd = random.Random(seed)
+
+    weights = [
+        event[2]
+        for event in EVENTS
+    ]
+
+    name, delta, _ = rnd.choices(
+        EVENTS,
+        weights=weights,
+        k=1
+    )[0]
+
+    return name, delta
+
+
+def main():
+    days = 6
+    seed = 42
+    speed = 0
+
+    print("=== АРЕС-1 ===")
+
+    print(
+        f"Delta-v: "
+        f"{delta_v(12000, 8000):.2f} м/с"
+    )
+
+    print(
+        f"Время перелёта: "
+        f"{flight_time(225_000_000, 0.001):.2f} ч"
+    )
+
+    print(
+        f"Необходимое топливо: "
+        f"{fuel_needed(8000, 3500):.2f} кг"
+    )
+
+    resource = 100
+    stopped = False
+    events = []
+
+    scheduler = sched.scheduler(
+        time.time,
+        time.sleep
+    )
+
+    start_time = time.time()
+
+    def report(day):
+        nonlocal resource, stopped
+
+        if stopped:
+            return
+
+        event_seed = seed + day
+
+        description, change = random_event(
+            event_seed
+        )
+
+        resource += change
+        resource = max(0, resource)
+
+        events.append(
+            (
+                day,
+                description,
+                change,
+                resource,
+            )
+        )
+
+        elapsed = time.time() - start_time
+
+        print(
+            f"[{elapsed:5.2f} c] "
+            f"Сутки {day:02d}: "
+            f"{description}; "
+            f"{change:+d}; "
+            f"ресурс = {resource}"
+        )
+
+        if resource == 0:
+            stopped = True
+            print("МИССИЯ ПРЕРВАНА: ресурс исчерпан")
+
+    for day in range(1, days + 1):
+        scheduler.enter(
+            (day - 1) * speed,
+            1,
+            report,
+            argument=(day,)
+        )
+
+    print("\nНачало симуляции...\n")
+
+    scheduler.run()
+
+    print("\nИтоги:")
+    print(f"Количество событий: {len(events)}")
+    print(f"Конечный ресурс: {resource}")
+
+    if resource > 0:
+        print("Миссия завершена успешно.")
+    else:
+        print("Миссия завершена досрочно.")
+
+
+if __name__ == "__main__":
+    main()
